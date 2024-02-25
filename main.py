@@ -2,7 +2,7 @@ import requests
 import base64
 import urllib.parse
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from flask import Flask, jsonify, redirect, render_template, request, session
 
 
@@ -33,7 +33,7 @@ def index():
 @app.route("/login")
 def login():
 
-    scope = 'user-read-private user-read-email'
+    scope = 'user-read-private playlist-read-private playlist-read-collaborative'
 
     # paramenter for the GET request
     parameters = {
@@ -48,6 +48,7 @@ def login():
     # redirect to the authentification URL
     return redirect(auth_url)
 
+#hadle the log in from spotify
 @app.route('/callback')
 def callback():
     # return if the user fails the authentification
@@ -70,25 +71,74 @@ def callback():
             },
             'headers': {
                 'content-type': 'application/x-www-form-urlencoded',
+                #encode in base 64 the client id and secret id
                 'Authorization': 'Basic ' + base64.b64encode((CLIENT_ID + ':' + CLIENT_SECRET).encode()).decode()
             }
         }
+    #send the request
     response = requests.post(TOKEN_URL, data=auth_options['data'], headers=auth_options['headers'])
     token_info = response.json()
 
     # token important data
-    session['access'] = token_info['access_token']
+    session['access_token'] = token_info['access_token']
     session['refresh_token'] = token_info['refresh_token']
     # when the token expires
     session['expires_at'] = datetime.now().timestamp() + token_info['expires_in']
     
     #debug
-    print(f"--------------------------------{session['access']}------------------{session['refresh_token']}------------------------{session['expires_at']}")
+    #print(f"--------------------------------{session['access']}------------------{session['refresh_token']}------------------------{session['expires_at']}")
     
     #rediret to the main page
-    return redirect('/success')
+    return redirect('/playlists')
 
-@app.route("/success")
-def success():
-    return "LOL"
+#try get playlist from user
+@app.route("/playlists")
+def get_playlists():
+    #if the login went wrong
+    if 'access_token' not in session:
+        return redirect('/login')
+    #if session expired
+    if datetime.now().timestamp() > session['expires_at']:
+        return redirect('/refresh_token')
+    
+    #header of the get request to the api
+    headers = {
+        'Authorization': f"Bearer {session['access_token']}"
+    }
 
+    response = requests.get(API_BASE_URL + 'me/playlists', headers=headers)
+
+    playlists = response.json()
+    return jsonify(playlists)
+
+@app.route('/refresh_token')
+def refresh_token():
+    #if the login went wrong
+    if 'access_token' not in session:
+        return redirect('/login')
+    #if session expired
+    if datetime.now().timestamp() > session['expires_at']:
+        request_body = {
+
+            'grant_type': 'refresh_token',
+            'refresh_token': session['refresh_token'],
+            'client_id': CLIENT_ID,
+        }
+
+        request_header = {
+            'content-type': 'application/x-www-form-urlencoded',
+            #encode in base 64 the client id and secret id
+            'Authorization': 'Basic ' + base64.b64encode((CLIENT_ID + ':' + CLIENT_SECRET).encode()).decode()
+        }
+        #send the response
+        response = requests.post(TOKEN_URL, data=request_body, headers=request_header)
+        #set the new token request
+        new_token_info = response.json()
+        session['access_token'] = new_token_info['access_token']
+        # when the token expires
+        session['expires_at'] = datetime.now().timestamp() + new_token_info['expires_in']
+
+        return redirect('/playlists')
+
+if __name__ == '__main__':
+    app.run(debug=True)
