@@ -6,8 +6,9 @@ from datetime import datetime
 from flask import Flask, jsonify, redirect, render_template, request, session
 
 
+
 # Configure application
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static')
 
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
@@ -84,14 +85,14 @@ def callback():
     session['refresh_token'] = token_info['refresh_token']
     # when the token expires
     session['expires_at'] = datetime.now().timestamp() + token_info['expires_in']
-    
-    #debug
-    #print(f"--------------------------------{session['access']}------------------{session['refresh_token']}------------------------{session['expires_at']}")
-    
+
+
     #rediret to the main page
     return redirect('/playlists')
 
-#try get playlist from user
+
+
+#get playlist from user
 @app.route("/playlists")
 def get_playlists():
     #if the login went wrong
@@ -100,17 +101,29 @@ def get_playlists():
     #if session expired
     if datetime.now().timestamp() > session['expires_at']:
         return redirect('/refresh_token')
+    #request function
+    from func import api_json
     
-    #header of the get request to the api
-    headers = {
-        'Authorization': f"Bearer {session['access_token']}"
-    }
+    playlists = api_json('me/playlists?limit=6')
+    #get all the items I need fro the playlists
+    
+    images_url = []
+    name = []
+    tracks_href = [] 
+    tracks_total = []
+    playlist_range = playlists['total']
+    for playlist in playlists['items']:
+        for i in playlist['images']:
+            if i['height'] == 300:
+                images_url.append(i['url'])
+        
+        tracks_total.append(playlist['tracks']['href'])
+        tracks_href.append(playlist['tracks']['total'])
+        name.append(playlist['name'])
 
-    response = requests.get(API_BASE_URL + 'me/playlists', headers=headers)
+    return render_template('index.html', images_url=images_url, name=name, tracks_href=tracks_href, tracks_total=tracks_total, playlist_range=playlist_range)
 
-    playlists = response.json()
-    return jsonify(playlists)
-
+#refreshes the token
 @app.route('/refresh_token')
 def refresh_token():
     #if the login went wrong
