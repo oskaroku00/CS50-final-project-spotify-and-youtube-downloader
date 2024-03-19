@@ -1,9 +1,13 @@
 import requests
 import json
-
+import re
+#youtube api to search and download the music
+from pytubefix import YouTube
+from pytubefix import Search
+from pytubefix.exceptions import RegexMatchError, VideoUnavailable
 from main import session, API_BASE_URL
 
-
+#get the JSON from spotify using the url and optional arguments
 def api_json(url):
     headers = {
         'Authorization': f"Bearer {session['access_token']}"
@@ -14,3 +18,29 @@ def api_json(url):
 
     return response
 
+#get and download the music from spotify
+def get_song(name, artist):
+
+    search = Search(f'{name} {artist}')
+    yt = search.results[0]
+
+    ys = yt.streams.get_audio_only()
+    ys.download(output_path='downloaded', filename=f'{name} - {artist}.mp3', timeout=120, max_retries=1)
+
+#get and download the music from the url
+def get_song_url(url):
+    try:
+        yt = YouTube(url)
+
+    except RegexMatchError: 
+        return 1
+    else:
+        ys = yt.streams.get_audio_only()
+        try: 
+            ys.download(output_path='downloaded', mp3=True, timeout=120, max_retries=1)
+        except VideoUnavailable:
+            return 2
+        return yt.title
+
+
+        

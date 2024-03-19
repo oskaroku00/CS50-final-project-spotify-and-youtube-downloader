@@ -1,0 +1,85 @@
+<!doctype html>
+
+<html>
+	<head>
+		<title>Download main page</title><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta name="description" content=""><meta name="keywords" content=""><meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"><!--[if lte IE 8]><script src="css/ie/html5shiv.js"></script><![endif]-->
+		<script src="static/js/jquery.min.js'"></script>
+		<script src="static/js/jquery.dropotron.min.js'"></script>
+		<script src="static/js/skel.min.js'"></script>
+		<script src="static/js/skel-layers.min.js'"></script>
+		<script src="static/js/init.js'"></script>
+		
+		<link rel="stylesheet" href="static/css/skel.css">
+		<link rel="stylesheet" href="static/css/style.css">
+		<link rel="stylesheet" href="static/css/style-wide.css">
+		
+	</head>
+	<body>
+		{% with messages = get_flashed_messages() %}
+			{% if messages %}
+			<div class="alert">
+				<ul class="center">
+				{% for message in messages %}
+					<li>{{ message }}</li>
+				{% endfor %}
+				</ul>
+			</div>
+			{% endif %}
+		{% endwith %}
+		<!-- Wrapper -->
+		<div class="wrapper style1">
+			
+			<!-- Header -->
+			<div id="header" class="skel-panels-fixed">
+				<div id="logo">
+					<h1><a href="index.html">Phase Shift</a></h1>
+					<span class="tag">by TEMPLATED</span>
+				</div>
+				<nav id="nav"><ul><li class="active"><a href="index.html">Homepage</a></li>
+					<li><a href="left-sidebar.html">Left Sidebar</a></li>
+					<li><a href="right-sidebar.html">Right Sidebar</a></li>
+					<li><a href="no-sidebar.html">No Sidebar</a></li>
+				</ul></nav></div>
+				<!-- Footer -->
+				<div id="footer" class="wrapper style2">
+					<div class="container">
+						<section><header class="major"><h2>Download with URL</h2>
+							<span class="byline">Copy the URL from the youtube video you want.</span>
+						</header>
+						</section>
+						<form method="post" action="/youtube">
+							<div class="row half">
+								<div class="12u">
+									<input autocomplete="off" autofocus class="text" type="text" name="url" placeholder="Paste the URL">
+								</div>
+							</div>
+								<div class="row half">
+									<div class="12u">
+										<ul class="actions">
+											<li>
+												<input type="submit" class="button alt" value="Download">
+											</li>
+										</ul>
+									</div>
+								</div>
+						</form>
+						</section>
+					</div>
+						</div>
+						<!-- /Footer -->
+						
+						<!-- Copyright -->
+						<div id="copyright">
+							<div class="container">
+								<br><ul class="icons"><li><a href="#" class="fa fa-facebook"><span>Facebook</span></a></li>
+									<li><a href="#" class="fa fa-twitter"><span>Twitter</span></a></li>
+									<li><a href="#" class="fa fa-google-plus"><span>Google+</span></a></li>
+								</ul></div>
+							</div>
+							<div class="copyright">
+								Site made with: <a href="https://templated.co/">Templated</a>
+							</div>
+		</div>
+	</body>
+</html>
+						

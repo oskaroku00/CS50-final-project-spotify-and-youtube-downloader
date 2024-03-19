@@ -636,4 +636,12 @@
 		margin: auto;
 		width: 50%;
 		padding: 10px;
+		text-align: center;
+	}
+	.alert {
+		padding: 20px;
+		background-color: #f44336; /* Red */
+		color: white;
+		margin-bottom: 15px;
+		margin: auto;
 	}

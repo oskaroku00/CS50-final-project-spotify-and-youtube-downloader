@@ -3,7 +3,7 @@ import base64
 import urllib.parse
 
 from datetime import datetime
-from flask import Flask, jsonify, redirect, render_template, request, session
+from flask import Flask, jsonify, redirect, render_template, request, session, flash, send_file
 
 
 
@@ -28,7 +28,30 @@ API_BASE_URL = 'https://api.spotify.com/v1/'
 #index of the app
 @app.route("/")
 def index():
-    return "My spotify app. Log in to start: <a href='/login'>LOG IN<a>"
+    return "Download music from Spotify: <a href='/login'>LOG IN<a> <br> Download from Youtube using URL: <a href='/youtube'> Go <a>"
+
+#if the user only wonts to download 1 track without login and usig a URL
+@app.route('/youtube', methods=["GET", "POST"])
+def youtube():
+    from func import get_song_url
+    if request.method == "POST":
+        
+        url = request.form.get('url')
+
+        video = get_song_url(url)
+
+        if video == 1:
+            flash('Invalid URL')
+            return render_template('youtube.html') 
+        if video == 2:
+            flash("Couldn't download")
+            return render_template('youtube.html')
+        else:
+            return send_file(f'downloaded/{video}.mp3', as_attachment=True)
+
+        
+    else: 
+        return render_template('youtube.html')
 
 # redirecting the user to the login spotify page
 @app.route("/login")
@@ -107,11 +130,14 @@ def get_playlists():
     playlists = api_json('me/playlists?limit=6')
     #get all the items I need fro the playlists
     
+    #different variables which I'm going to use
     images_url = []
     name = []
     tracks_href = [] 
     tracks_total = []
     playlist_range = playlists['total']
+    
+    #nested for loop to get the specific information
     for playlist in playlists['items']:
         for i in playlist['images']:
             if i['height'] == 300:
