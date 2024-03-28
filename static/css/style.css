@@ -384,34 +384,6 @@
 			color: #FFF;
 		}
 
-/* Tables */
-
-	table {
-		width: 100%;
-	}
-
-		table.default {
-			width: 100%;
-		}
-
-			table.default tbody tr {
-				border-bottom: solid 1px #888888;
-			}
-
-			table.default td {
-				padding: 0.5em 1em 0.5em 1em;
-			}
-
-			table.default th {
-				font-weight: 700;
-				padding: 0.5em 1em 0.5em 1em;
-				text-align: left;
-			}
-
-			table.default thead {
-				background: #555555;
-				color: #fff;
-			}
 
 /* Button */
 
@@ -429,7 +401,7 @@
 		-o-transition: background-color 0.35s ease-in-out;
 		-ms-transition: background-color 0.35s ease-in-out;
 		transition: background-color 0.35s ease-in-out;
-		background: #d84780;
+		background: hsl(198, 68%, 59%);
 		border-radius: 6px;
 		border: 0;
 		color: white;
@@ -449,7 +421,7 @@
 		input[type="reset"]:hover,
 		input[type="button"]:hover,
 		.button:hover {
-			background: #e1719d;
+			background: hsl(184, 91%, 25%);
 		}
 
 		input[type="submit"].alt,
@@ -487,16 +459,14 @@
 	.wrapper.style1 {
 		padding-top: 10em;
 		padding-bottom: 2em;
-		background: url(../images/bg.jpg) no-repeat center top;
+		background: hwb(154 11% 32%);
 		background-size: cover;
 		background-attachment: fixed;
-		-webkit-backface-visibility: hidden;
-		-webkit-transform: translateZ(0);
 	}
 
 	.wrapper.style2 {
 		padding: 6em 0;
-		background: #d84780;
+		background: hwb(154 9% 54%);
 		color: white;
 	}
 

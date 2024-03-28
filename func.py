@@ -19,13 +19,13 @@ def api_json(url):
     return response
 
 #get and download the music from spotify
-def get_song(name, artist):
+def get_song(name, artist, path):
 
     search = Search(f'{name} {artist}')
     yt = search.results[0]
 
     ys = yt.streams.get_audio_only()
-    ys.download(output_path='downloaded', filename=f'{name} - {artist}.mp3', timeout=120, max_retries=1)
+    ys.download(output_path=f'downloaded/{path}', filename=f'{name} - {artist}.mp3', timeout=120, max_retries=1)
 
 #get and download the music from the url
 def get_song_url(url):
@@ -43,4 +43,3 @@ def get_song_url(url):
         return yt.title
 
 
-        

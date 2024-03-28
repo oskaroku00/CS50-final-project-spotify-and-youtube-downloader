@@ -1,7 +1,9 @@
 import requests
 import base64
 import urllib.parse
-
+import os
+import random
+import string
 from datetime import datetime
 from flask import Flask, jsonify, redirect, render_template, request, session, flash, send_file
 
@@ -53,10 +55,55 @@ def youtube():
     else: 
         return render_template('youtube.html')
 
+@app.route('/spotify_uri', methods=["GET", "POST"])
+def spotify_uri():
+    #if the login went wrong
+    if 'access_token' not in session:
+        return redirect('/login')
+    #if session expired
+    if datetime.now().timestamp() > session['expires_at']:
+        return redirect('/refresh_token')
+    from func import get_song, api_json
+    if request.method == "POST":
+        
+        url = request.form.get('url')
+        #get the valid id for the list
+        try:
+            uri = url.split("spotify:playlist:", 1)[1]
+        except IndexError:
+            flash('Invalid URL')
+            return render_template('spotify_uri.html')
+        
+        playlist = api_json(f'playlists/{uri}/tracks?limit=50')
+        tracks_total = playlist['total']
+        name = []
+        artist = []
+
+        for i in playlist['items']:
+            name.append(i['track']['name'])
+            for b in i['track']['artists']:
+                artist.append(b['name'])
+        
+        #create a path where to store the songs
+        path_name = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(5))
+        path = f'/home/oskar/project/downloaded/{path_name}'
+        os.mkdir(path)
+        
+        for i in range(tracks_total):
+            get_song(name[i], artist[i], path_name)
+
+    return render_template('spotify_uri.html')
+
 # redirecting the user to the login spotify page
 @app.route("/login")
 def login():
 
+    #if the login went wrong
+    if 'access_token' not in session:
+        return redirect('/login')
+    #if session expired
+    if datetime.now().timestamp() > session['expires_at']:
+        return redirect('/refresh_token')
     scope = 'user-read-private playlist-read-private playlist-read-collaborative'
 
     # paramenter for the GET request
@@ -143,11 +190,13 @@ def get_playlists():
             if i['height'] == 300:
                 images_url.append(i['url'])
         
-        tracks_total.append(playlist['tracks']['href'])
-        tracks_href.append(playlist['tracks']['total'])
+        tracks_total.append(playlist['tracks']['total'])
+        tracks_href.append(playlist['tracks']['href'])
         name.append(playlist['name'])
 
     return render_template('index.html', images_url=images_url, name=name, tracks_href=tracks_href, tracks_total=tracks_total, playlist_range=playlist_range)
+
+
 
 #refreshes the token
 @app.route('/refresh_token')
