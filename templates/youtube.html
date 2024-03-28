@@ -20,7 +20,7 @@
 	<body>
 		{% with messages = get_flashed_messages() %}
 			{% if messages %}
-			<div class="alert">
+			<div class="flashalert">
 				<ul class="center">
 				{% for message in messages %}
 					<li>{{ message }}</li>

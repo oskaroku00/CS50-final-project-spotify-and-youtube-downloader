@@ -608,7 +608,7 @@
 		padding: 10px;
 		text-align: center;
 	}
-	.alert {
+	.flashalert {
 		padding: 20px;
 		background-color: #f44336; /* Red */
 		color: white;

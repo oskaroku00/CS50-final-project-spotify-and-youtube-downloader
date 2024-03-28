@@ -21,7 +21,7 @@
 	<body>
 		{% with messages = get_flashed_messages() %}
 			{% if messages %}
-			<div class="alert">
+			<div class="flashalert">
 				<ul class="center">
 				{% for message in messages %}
 					<li>{{ message }}</li>
@@ -73,12 +73,6 @@
 						
 						<!-- Copyright -->
 						<div id="copyright">
-							<div class="container">
-								<br><ul class="icons"><li><a href="#" class="fa fa-facebook"><span>Facebook</span></a></li>
-									<li><a href="#" class="fa fa-twitter"><span>Twitter</span></a></li>
-									<li><a href="#" class="fa fa-google-plus"><span>Google+</span></a></li>
-								</ul></div>
-							</div>
 							<div class="copyright">
 								Site made with: <a href="https://templated.co/">Templated</a>
 							</div>

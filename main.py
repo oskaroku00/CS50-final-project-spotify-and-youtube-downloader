@@ -5,6 +5,8 @@ import os
 import random
 import string
 from datetime import datetime
+import shutil
+import glob
 from flask import Flask, jsonify, redirect, render_template, request, session, flash, send_file
 
 
@@ -53,6 +55,9 @@ def youtube():
 
         
     else: 
+        #remove all the files in the downloaded directory to create space
+        shutil.rmtree('/home/oskar/project/downloaded')
+        os.makedirs('downloaded')
         return render_template('youtube.html')
 
 @app.route('/spotify_uri', methods=["GET", "POST"])
@@ -82,17 +87,33 @@ def spotify_uri():
         for i in playlist['items']:
             name.append(i['track']['name'])
             for b in i['track']['artists']:
-                artist.append(b['name'])
+                if b['name'] == "":
+                    artist.append("null")
+                else:
+                    artist.append(b['name'])
+                
         
         #create a path where to store the songs
+        
         path_name = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(5))
         path = f'/home/oskar/project/downloaded/{path_name}'
         os.mkdir(path)
         
         for i in range(tracks_total):
             get_song(name[i], artist[i], path_name)
-
-    return render_template('spotify_uri.html')
+        
+        shutil.make_archive(f'{path_name}', 'zip', f'/home/oskar/project/downloaded/{path_name}')
+        
+        shutil.move(f'{path_name}.zip', '/home/oskar/project/downloaded')
+        
+        return send_file(f'/home/oskar/project/downloaded/{path_name}.zip', as_attachment=True)
+        
+    
+    else:
+        #remove all the files in the downloaded directory to create space
+        shutil.rmtree('/home/oskar/project/downloaded')
+        os.makedirs('downloaded')
+        return render_template('spotify_uri.html')
 
 # redirecting the user to the login spotify page
 @app.route("/login")

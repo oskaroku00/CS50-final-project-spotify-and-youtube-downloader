@@ -1,3 +1,4 @@
+import shutil
 import os
-xd = 'lol'
-os.mkdir(f'/home/oskar/project/downloaded/{xd}')
+shutil.rmtree('/home/oskar/project/downloaded')
+os.makedirs('downloaded')
