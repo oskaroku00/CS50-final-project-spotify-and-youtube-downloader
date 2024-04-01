@@ -6,7 +6,6 @@ import random
 import string
 from datetime import datetime
 import shutil
-import glob
 from flask import Flask, jsonify, redirect, render_template, request, session, flash, send_file
 
 
@@ -32,7 +31,7 @@ API_BASE_URL = 'https://api.spotify.com/v1/'
 #index of the app
 @app.route("/")
 def index():
-    return "Download music from Spotify: <a href='/login'>LOG IN<a> <br> Download from Youtube using URL: <a href='/youtube'> Go <a>"
+    return render_template("youtube.html")
 
 #if the user only wonts to download 1 track without login and usig a URL
 @app.route('/youtube', methods=["GET", "POST"])
@@ -76,10 +75,24 @@ def spotify_uri():
         try:
             uri = url.split("spotify:playlist:", 1)[1]
         except IndexError:
-            flash('Invalid URL')
-            return render_template('spotify_uri.html')
+            try:
+                uri = url.split("https://open.spotify.com/playlist/", 1)[1]
+            except IndexError:
+                flash('Invalid URI')
+                return render_template('spotify_uri.html')
         
+        #playlist request 
         playlist = api_json(f'playlists/{uri}/tracks?limit=50')
+
+
+        print(playlist)
+
+        #name of the playlist
+        pl_n = api_json(f'playlists/{uri}')
+        
+        playlist_name = pl_n['name']
+
+        
         tracks_total = playlist['total']
         name = []
         artist = []
@@ -95,12 +108,13 @@ def spotify_uri():
         
         #create a path where to store the songs
         
-        path_name = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(5))
+        path_name = playlist_name
         path = f'/home/oskar/project/downloaded/{path_name}'
         os.mkdir(path)
-        
+        #counter of songs downloaded
+        counter = 0
         for i in range(tracks_total):
-            get_song(name[i], artist[i], path_name)
+            song = get_song(name[i], artist[i], path_name)
         
         shutil.make_archive(f'{path_name}', 'zip', f'/home/oskar/project/downloaded/{path_name}')
         
@@ -184,8 +198,10 @@ def callback():
 
 
 #get playlist from user
-@app.route("/playlists")
+@app.route("/playlists", methods=["GET", "POST"])
 def get_playlists():
+    
+    from func import api_json, get_song
     #if the login went wrong
     if 'access_token' not in session:
         return redirect('/login')
@@ -193,30 +209,86 @@ def get_playlists():
     if datetime.now().timestamp() > session['expires_at']:
         return redirect('/refresh_token')
     #request function
-    from func import api_json
-    
-    playlists = api_json('me/playlists?limit=6')
-    #get all the items I need fro the playlists
-    
-    #different variables which I'm going to use
-    images_url = []
-    name = []
-    tracks_href = [] 
-    tracks_total = []
-    playlist_range = playlists['total']
-    
-    #nested for loop to get the specific information
-    for playlist in playlists['items']:
-        for i in playlist['images']:
-            if i['height'] == 300:
-                images_url.append(i['url'])
+    if request.method == 'GET':
+        from func import api_json
         
-        tracks_total.append(playlist['tracks']['total'])
-        tracks_href.append(playlist['tracks']['href'])
-        name.append(playlist['name'])
+        playlists = api_json('me/playlists?limit=6')
+        #get all the items I need fro the playlists
+        
+        #different variables which I'm going to use
+        images_url = []
+        name = []
+        tracks_href = [] 
+        tracks_total = []
+        id = []
+        playlist_range = playlists['total']
+        
+        #nested for loop to get the specific information
+        for playlist in playlists['items']:
+            for i in playlist['images']:
+                if i['height'] == 300:
+                    images_url.append(i['url'])
+            
+            tracks_total.append(playlist['tracks']['total'])
+            tracks_href.append(playlist['tracks']['href'])
+            name.append(playlist['name'])
+            id.append(playlist['id'])
+        
+        # remove folders from other downloads
+        shutil.rmtree('/home/oskar/project/downloaded')
+        os.makedirs('downloaded')
 
-    return render_template('index.html', images_url=images_url, name=name, tracks_href=tracks_href, tracks_total=tracks_total, playlist_range=playlist_range)
+        return render_template('index.html', images_url=images_url, name=name, tracks_href=tracks_href, tracks_total=tracks_total, playlist_range=playlist_range, id=id)
+    else:
+        
+        url = request.form.get('url')
+        print(url)
+        #get the valid id for the list
+        
+        # try:
+        #     uri = url.split("https://open.spotify.com/playlist/", 1)[1]
+        # except IndexError:
+        #     flash('Invalid URI')
+        #     return render_template('spotify_uri.html')
+        
+        playlist = api_json(f'playlists/{url}/tracks?limit=50')
+        pl_n = api_json(f'playlists/{url}')
+        
+        playlist_name = pl_n['name']
+        
+        tracks_total = playlist['total']
+        name = []
+        artist = []
 
+        
+
+
+
+        for i in playlist['items']:
+            name.append(i['track']['name'])
+            for b in i['track']['artists']:
+                if b['name'] == "":
+                    artist.append("null")
+                else:
+                    artist.append(b['name'])
+                
+        print(name)
+        print(artist)
+        #create a path where to store the songs
+        
+        path_name = playlist_name
+        path = f'/home/oskar/project/downloaded/{path_name}'
+        os.mkdir(path)
+        #counter of songs downloaded
+        counter = 0
+        for i in range(tracks_total):
+            get_song(name[i], artist[i], path_name)
+        
+        shutil.make_archive(f'{path_name}', 'zip', f'/home/oskar/project/downloaded/{path_name}')
+        
+        shutil.move(f'{path_name}.zip', '/home/oskar/project/downloaded')
+        
+        return send_file(f'/home/oskar/project/downloaded/{path_name}.zip', as_attachment=True)
 
 
 #refreshes the token

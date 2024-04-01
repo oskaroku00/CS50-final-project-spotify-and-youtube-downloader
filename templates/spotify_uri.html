@@ -19,17 +19,6 @@
 		
 	</head>
 	<body>
-		{% with messages = get_flashed_messages() %}
-			{% if messages %}
-			<div class="flashalert">
-				<ul class="center">
-				{% for message in messages %}
-					<li>{{ message }}</li>
-				{% endfor %}
-				</ul>
-			</div>
-			{% endif %}
-		{% endwith %}
 		<!-- Wrapper -->
 		<div class="wrapper style1">
 			
@@ -46,7 +35,7 @@
 				<!-- Footer -->
 				<div id="footer" class="wrapper style2">
 					<div class="container">
-						<section><header class="major"><h2>Download with URI</h2>
+						<section><header class="major"><h2>Download with spotify URI</h2>
 							<span class="byline">To get the <strong>Spotify URI</strong> select share in the app while holding the <strong>CTRL key</strong></span>
 						</header>
 						</section>
@@ -70,6 +59,17 @@
 					</div>
 						</div>
 						<!-- /Footer -->
+						{% with messages = get_flashed_messages() %}
+							{% if messages %}
+							<div class="flashalert">
+								<ul class="center">
+								{% for message in messages %}
+									<li class="fs-1">{{ message }}</li>
+								{% endfor %}
+								</ul>
+							</div>
+							{% endif %}
+						{% endwith %}
 						
 						<!-- Copyright -->
 						<div id="copyright">

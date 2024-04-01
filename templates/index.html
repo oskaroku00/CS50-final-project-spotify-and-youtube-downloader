@@ -38,29 +38,28 @@
 
 				<!-- Banner -->
 					<div id="banner" class="container">
-						<section><p><strong>Spotify Downloader</strong>, heare you can select your spotify playlist or selact a specific playlist or song with the <strong>Spotify URI</strong>, alo you can download <storng>Youtube Songs</storng> using a <strong>URL</strong>.</p>
+						<section><p><strong>Spotify Downloader</strong>, heare you can select your spotify playlist from your last listened or selact a specific playlist or song with the <strong>Spotify URI</strong>, also you can download <storng>Youtube Songs</storng> using a <strong>URL</strong>.</p>
 						<strong>No more than 50 Songs</strong>
 						</section>
-						<br>
-						<section>To get the <strong>Spotify URI</strong> select share in the app while holding the CTRL key</section>
+						
 					</div>
 					
 					<div id="extra" >
 						<div class="container">
-							<table class="table table-bordered">
-								<thead>
+							<table class="table table-bordered  border border-dark border-3">
+								<thead class="">
 								  <tr class="">
-									<th scope="col" class="table-success">Playlist Name</th>
-									<th scope="col" class="table-success">Songs</th>
-									<th scope="col" class="table-success">Download</th>
+									<th scope="col" class="">Playlist Name</th>
+									<th scope="col" class="">Songs</th>
+									<th scope="col" class="">Download</th>
 								  </tr>
 								</thead>
-								<tbody>
+								<tbody class="table-group-divider">
 								{% for i in range(6) %}
 								  <tr class="">
-									<td class="table-success">{{name[i]}}</td>
-									<td class="table-success">{{tracks_total[i]}}</td>
-									<td class="table-success"><a href="#" class="button">Download</a></td>
+									<td class="">{{name[i]}}</td>
+									<td class="">{{tracks_total[i]}}</td>
+									<td class="align-cen"><form method="post" action="/playlists" ><input name="url" style = "display:none;" value = {{id[i]}}> <input type="submit" class="button alt" value="Download"></form></td>
 								  </tr>
 								{% endfor %}
 								</tbody>

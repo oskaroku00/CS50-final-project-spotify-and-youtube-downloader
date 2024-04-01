@@ -18,17 +18,6 @@
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 	</head>
 	<body>
-		{% with messages = get_flashed_messages() %}
-			{% if messages %}
-			<div class="flashalert">
-				<ul class="center">
-				{% for message in messages %}
-					<li>{{ message }}</li>
-				{% endfor %}
-				</ul>
-			</div>
-			{% endif %}
-		{% endwith %}
 		<!-- Wrapper -->
 		<div class="wrapper style1">
 			
@@ -39,42 +28,53 @@
 					<span class="tag">by Oskar</span>
 				</div>
 				<nav id="nav"><ul><li class="active"><a href="/playlists">Homepage</a></li>
-						<li><a href="/youtube">Youtube-URL</a></li>
-						<li><a href="/spotify_uri">Spotify-URI</a></li>
-					</ul></nav></div>
+					<li><a href="/youtube">Youtube-URL</a></li>
+					<li><a href="/spotify_uri">Spotify-URI</a></li>
+				</ul></nav></div>
 				<!-- Footer -->
 				<div id="footer" class="wrapper style2">
 					<div class="container">
-						<section><header class="major"><h2>Download with URL</h2>
+						<section><header class="major"><h2>Download with URL from youtube</h2>
 							<span class="byline">Copy the URL from the youtube video you want.</span>
 						</header>
-						</section>
-						<form method="post" action="/youtube">
-							<div class="row half">
-								<div class="12u">
-									<input autocomplete="off" autofocus class="text" type="text" name="url" placeholder="Paste the URL">
-								</div>
+					</section>
+					<form method="post" action="/youtube">
+						<div class="row half">
+							<div class="12u">
+								<input autocomplete="off" autofocus class="text" type="text" name="url" placeholder="Paste the URL">
 							</div>
-								<div class="row half">
-									<div class="12u">
-										<ul class="actions">
-											<li>
-												<input type="submit" class="button alt" value="Download">
-											</li>
-										</ul>
-									</div>
-								</div>
-						</form>
-						</section>
-					</div>
 						</div>
-						<!-- /Footer -->
-						
-						<!-- Copyright -->
-						
-							<div class="copyright">
-								Site made with: <a href="https://templated.co/">Templated</a>
+						<div class="row half">
+							<div class="12u">
+								<ul class="actions">
+									<li>
+										<input type="submit" class="button alt" value="Download">
+									</li>
+								</ul>
 							</div>
+						</div>
+					</form>
+				</section>
+			</div>
+		</div>
+		<!-- /Footer -->
+		{% with messages = get_flashed_messages() %}
+			{% if messages %}
+			<div class="flashalert">
+				<ul class="center">
+				{% for message in messages %}
+					<li class="fs-1">{{ message }}</li>
+				{% endfor %}
+				</ul>
+			</div>
+			{% endif %}
+		{% endwith %}
+		
+		<!-- Copyright -->
+		
+		<div class="copyright">
+			Site made with: <a href="https://templated.co/">Templated</a>
+		</div>
 		</div>
 	</body>
 </html>

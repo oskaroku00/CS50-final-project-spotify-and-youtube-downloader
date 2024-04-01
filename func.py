@@ -26,10 +26,11 @@ def get_song(name, artist, path):
     else:
         search = Search(f'{name} - {artist}')
     
+    
     yt = search.results[0]
-
     ys = yt.streams.get_audio_only()
     ys.download(output_path=f'downloaded/{path}', mp3=True , timeout=120, max_retries=1)
+
 # filename=f'{name}.mp3'
 #get and download the music from the url
 def get_song_url(url):
