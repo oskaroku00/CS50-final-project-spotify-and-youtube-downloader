@@ -2,11 +2,9 @@ import requests
 import base64
 import urllib.parse
 import os
-import random
-import string
 from datetime import datetime
 import shutil
-from flask import Flask, jsonify, redirect, render_template, request, session, flash, send_file
+from flask import Flask, jsonify, redirect, render_template, request, session, flash, send_file, Response
 
 
 
@@ -42,12 +40,12 @@ def youtube():
         url = request.form.get('url')
 
         video = get_song_url(url)
-
+        #error cases
         if video == 1:
             flash('Invalid URL')
             return render_template('youtube.html') 
         if video == 2:
-            flash("Couldn't download")
+            flash("Couldn't download, or invalid URL")
             return render_template('youtube.html')
         else:
             return send_file(f'downloaded/{video}.mp3', as_attachment=True)
@@ -76,16 +74,23 @@ def spotify_uri():
             uri = url.split("spotify:playlist:", 1)[1]
         except IndexError:
             try:
-                uri = url.split("https://open.spotify.com/playlist/", 1)[1]
+                url = url.split("https://open.spotify.com/playlist/", 1)[1]
             except IndexError:
                 flash('Invalid URI')
                 return render_template('spotify_uri.html')
+        uri = ""
+        c = 0
+        for i in url:
+            if i != "?":
+                c += 1
+            else:
+                uri = url[0:c]
+                break
+
         
         #playlist request 
+        print(uri)
         playlist = api_json(f'playlists/{uri}/tracks?limit=50')
-
-
-        print(playlist)
 
         #name of the playlist
         pl_n = api_json(f'playlists/{uri}')
@@ -112,9 +117,18 @@ def spotify_uri():
         path = f'/home/oskar/project/downloaded/{path_name}'
         os.mkdir(path)
         #counter of songs downloaded
-        counter = 0
+        
+        counter = 1
+        if tracks_total > 50:
+            tracks_total == 50
         for i in range(tracks_total):
-            song = get_song(name[i], artist[i], path_name)
+            get_song(name[i], path_name)
+            
+            # x = counter/tracks_total * 100
+
+            # progress(int(x))
+            # counter += 1
+
         
         shutil.make_archive(f'{path_name}', 'zip', f'/home/oskar/project/downloaded/{path_name}')
         
@@ -129,16 +143,18 @@ def spotify_uri():
         os.makedirs('downloaded')
         return render_template('spotify_uri.html')
 
+# progress bar dynamic update   
+# @app.route('/progress')
+# def progress(song):
+#     def generate(x):
+#             print(x, "lol")
+#             yield "data:" + str(x) + "\n\n"
+#     return Response(generate(song), mimetype= 'text/event-stream')
+
 # redirecting the user to the login spotify page
 @app.route("/login")
 def login():
 
-    #if the login went wrong
-    if 'access_token' not in session:
-        return redirect('/login')
-    #if session expired
-    if datetime.now().timestamp() > session['expires_at']:
-        return redirect('/refresh_token')
     scope = 'user-read-private playlist-read-private playlist-read-collaborative'
 
     # paramenter for the GET request
@@ -240,18 +256,13 @@ def get_playlists():
 
         return render_template('index.html', images_url=images_url, name=name, tracks_href=tracks_href, tracks_total=tracks_total, playlist_range=playlist_range, id=id)
     else:
-        
+        #get the url
         url = request.form.get('url')
-        print(url)
-        #get the valid id for the list
-        
-        # try:
-        #     uri = url.split("https://open.spotify.com/playlist/", 1)[1]
-        # except IndexError:
-        #     flash('Invalid URI')
-        #     return render_template('spotify_uri.html')
-        
+       
+    
+        #send the api request and get response
         playlist = api_json(f'playlists/{url}/tracks?limit=50')
+        #name of the playlist
         pl_n = api_json(f'playlists/{url}')
         
         playlist_name = pl_n['name']
@@ -260,10 +271,6 @@ def get_playlists():
         name = []
         artist = []
 
-        
-
-
-
         for i in playlist['items']:
             name.append(i['track']['name'])
             for b in i['track']['artists']:
@@ -271,18 +278,18 @@ def get_playlists():
                     artist.append("null")
                 else:
                     artist.append(b['name'])
-                
-        print(name)
-        print(artist)
+
         #create a path where to store the songs
         
         path_name = playlist_name
         path = f'/home/oskar/project/downloaded/{path_name}'
         os.mkdir(path)
         #counter of songs downloaded
-        counter = 0
+        # counter = 0
+        if tracks_total > 50:
+            tracks_total == 50
         for i in range(tracks_total):
-            get_song(name[i], artist[i], path_name)
+            get_song(name[i], path_name)
         
         shutil.make_archive(f'{path_name}', 'zip', f'/home/oskar/project/downloaded/{path_name}')
         
