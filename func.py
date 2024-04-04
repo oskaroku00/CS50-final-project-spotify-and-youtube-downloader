@@ -1,6 +1,5 @@
 import requests
 import json
-import re
 #youtube api to search and download the music
 from pytubefix import YouTube
 from pytubefix import Search
@@ -34,17 +33,20 @@ def get_song(name, path):
 # filename=f'{name}.mp3'
 #get and download the music from the url
 def get_song_url(url):
+    #checking if the url is valid
     try:
         yt = YouTube(url)
 
     except RegexMatchError: 
         return 1
     else:
+        #try if the download is possible
         try: 
             ys = yt.streams.get_audio_only()
             ys.download(output_path='downloaded', mp3=True, timeout=120, max_retries=1)
         except VideoUnavailable:
             return 2
+        #returning the title for the file name
         return yt.title
 
 

@@ -89,7 +89,6 @@ def spotify_uri():
 
         
         #playlist request 
-        print(uri)
         playlist = api_json(f'playlists/{uri}/tracks?limit=50')
 
         #name of the playlist
@@ -147,8 +146,7 @@ def spotify_uri():
 # @app.route('/progress')
 # def progress(song):
 #     def generate(x):
-#             print(x, "lol")
-#             yield "data:" + str(x) + "\n\n"
+#             return "data:" + str(x) + "\n\n"
 #     return Response(generate(song), mimetype= 'text/event-stream')
 
 # redirecting the user to the login spotify page
