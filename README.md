@@ -200,7 +200,7 @@ Additionally you also will need to change some **folder** **paths** which are co
 	With the **access token**  it calls the **api_json( url )** function to get the 6 last listened playlist in their account, and displays the playlist in a table next to other information about the playlist and the download button
 
 	```python
-		playlists = api_json('me/playlists?limit=6')
+	playlists = api_json('me/playlists?limit=6')
         #get all the items I need fro the playlists
         
         #different variables which I'm going to use
@@ -228,7 +228,7 @@ Additionally you also will need to change some **folder** **paths** which are co
 	When the user clicks the download button the download process begins calling the **api_json( url )** function and getting all 	the relevant information about the playlist 
 
 	```python
-		#send the api request and get response
+	#send the api request and get response
         playlist = api_json(f'playlists/{url}/tracks?limit=50')
         #name of the playlist
         pl_n = api_json(f'playlists/{url}')
@@ -293,15 +293,15 @@ At first I wanted to code a progress bar for the playlist downloader because of 
 > client side code
 
 ```javascript
-	var source = new EventSource("/progress");
-		source.onmessage = function(event) {
-			$('.progress-bar').css('width', event.data+'%').attr('aria-valuenow', event.data);   
-		}
+var source = new EventSource("/progress");
+	source.onmessage = function(event) {
+		$('.progress-bar').css('width', event.data+'%').attr('aria-valuenow', event.data);   
+	}
 ```
 ```html
 <div class="progress" style="width: 100%;">
-							<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
-						</div>
+	<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+</div>
 ```
 
 > server side code
