@@ -49,8 +49,8 @@ If you wan to download this project and use it you will need to sign up into the
 
 >  **21 22 23**
 
-    CLIENT_ID = 'd5248a9df7094903900ac146b3fd8687'
-    CLIENT_SECRET = '464d694b440d4b308e64d3da16409b9f'
+    CLIENT_ID = '*********************************'
+    CLIENT_SECRET = '*****************************'
     REDIRECT_URI = 'http://127.0.0.1:5000/callback' 
 
 > The redirect_uri is changed in the developer dashboard (redirect url)
@@ -75,6 +75,9 @@ Additionally you also will need to change some **folder** **paths** which are co
 
 - main.py (all server information is stored)
 -  func.py (some usefull functions I wrote because I use them repeatedly)
+
+###### other folders :
+
 - The static folder is where the css and the fonts are saved
 - The download folder is where the songs and playlist are temporarily stored , sended and deleted
 
