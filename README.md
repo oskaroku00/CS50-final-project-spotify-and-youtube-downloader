@@ -203,7 +203,7 @@ Additionally you also will need to change some **folder** **paths** which are co
 	With the **access token**  it calls the **api_json( url )** function to get the 6 last listened playlist in their account, and displays the playlist in a table next to other information about the playlist and the download button
 
 	```python
-	playlists = api_json('me/playlists?limit=6')
+		playlists = api_json('me/playlists?limit=6')
         #get all the items I need fro the playlists
         
         #different variables which I'm going to use
@@ -231,7 +231,7 @@ Additionally you also will need to change some **folder** **paths** which are co
 	When the user clicks the download button the download process begins calling the **api_json( url )** function and getting all 	the relevant information about the playlist 
 
 	```python
-	#send the api request and get response
+		#send the api request and get response
         playlist = api_json(f'playlists/{url}/tracks?limit=50')
         #name of the playlist
         pl_n = api_json(f'playlists/{url}')
@@ -263,7 +263,7 @@ Additionally you also will need to change some **folder** **paths** which are co
 	It haves some safety for the **user imput** :
 	
 	```python
-	#get the valid id for the list
+		#get the valid id for the list
         try:
             uri = url.split("spotify:playlist:", 1)[1]
         except IndexError:
