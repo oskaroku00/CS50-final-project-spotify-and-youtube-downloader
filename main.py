@@ -18,9 +18,10 @@ app.debug = True
 app.secret_key = '8f42a73054b1749f8f58848be5e6502c'
 
 # important variables 
-CLIENT_ID = 'd5248a9df7094903900ac146b3fd8687'
-CLIENT_SECRET = '464d694b440d4b308e64d3da16409b9f'
-REDIRECT_URI = 'http://127.0.0.1:5000/callback'
+# you need to change this veriables whit your own ones 
+CLIENT_ID = '***********************************'
+CLIENT_SECRET = '****************************'
+REDIRECT_URI = '******************************'
 
 AUTH_URL = 'https://accounts.spotify.com/authorize'
 TOKEN_URL = 'https://accounts.spotify.com/api/token'
